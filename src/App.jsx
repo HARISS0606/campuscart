@@ -125,10 +125,37 @@ export default function App() {
       {demoMode && (
         <div className="demo-banner">
           Running in demo mode (no Firebase keys found). Listings are stored
-          in memory only. Add your Firebase config to <code>.env</code> to
-          enable real accounts and persistence.
+          in memory only. Sign in above to unlock selling — no real email
+          needed in demo mode. Add your Firebase config to <code>.env</code>{" "}
+          to enable real accounts and persistence.
         </div>
       )}
+
+      <section className="hero">
+        <div className="hero-text">
+          <h1>Don't bin it. Pass it on.</h1>
+          <p>
+            Buy and sell textbooks, cycles, and furniture with students on
+            your own campus — verified, local, and zero shipping.
+          </p>
+        </div>
+        <div className="hero-stats">
+          <div className="stat">
+            <span className="stat-num">{items.length}</span>
+            <span className="stat-label">items listed</span>
+          </div>
+          <div className="stat">
+            <span className="stat-num">{items.filter((i) => i.sold).length}</span>
+            <span className="stat-label">items reused</span>
+          </div>
+          <div className="stat">
+            <span className="stat-num">
+              ₹{items.reduce((sum, i) => sum + Number(i.price), 0).toLocaleString("en-IN")}
+            </span>
+            <span className="stat-label">total value on campus</span>
+          </div>
+        </div>
+      </section>
 
       <FilterBar
         query={query}
