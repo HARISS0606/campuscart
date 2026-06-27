@@ -64,10 +64,12 @@ export function watchAuth(callback) {
 }
 
 // ---------- Firestore: Listings ----------
-const listingsRef = collection(db, "listings");
+function getListingsRef() {
+  return collection(db, "listings");
+}
 
 export async function addListing({ title, category, price, condition, sellerName, sellerEmail, imageUrl }) {
-  return addDoc(listingsRef, {
+  return addDoc(getListingsRef(), {
     title,
     category,
     price: Number(price),
@@ -81,7 +83,7 @@ export async function addListing({ title, category, price, condition, sellerName
 }
 
 export async function getAllListings() {
-  const q = query(listingsRef, orderBy("createdAt", "desc"));
+  const q = query(getListingsRef(), orderBy("createdAt", "desc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
