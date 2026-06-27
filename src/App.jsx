@@ -4,15 +4,10 @@ import FilterBar from "./components/FilterBar";
 import ItemCard from "./components/ItemCard";
 import PostItemModal from "./components/PostItemModal";
 import { mockListings } from "./data/mockData";
+import * as firebaseApi from "./firebase.js";
 
 // Firebase is optional for local/demo use. If env vars aren't set, the app
 // falls back to in-memory mock data so it still runs and can be demoed.
-let firebaseApi = null;
-try {
-  firebaseApi = await import("./firebase.js");
-} catch (e) {
-  console.warn("Firebase not configured, running in demo mode with mock data.");
-}
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -22,7 +17,7 @@ export default function App() {
   const [activeCat, setActiveCat] = useState("All");
   const [showPostModal, setShowPostModal] = useState(false);
 
-  const demoMode = !firebaseApi || !import.meta.env.VITE_FIREBASE_API_KEY;
+  const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
   useEffect(() => {
     if (demoMode) return;

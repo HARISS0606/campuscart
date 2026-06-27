@@ -35,10 +35,18 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+let app, auth, db, storage;
+try {
+  if (firebaseConfig.apiKey) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  }
+} catch (e) {
+  console.warn("Firebase init skipped:", e.message);
+}
+export { app, auth, db, storage };
 
 // ---------- Auth helpers ----------
 const provider = new GoogleAuthProvider();
