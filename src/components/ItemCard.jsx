@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessageSeller, onMarkSold, isOwner }) {
+export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessageSeller, onMarkSold, onAddToCart, inCart, isOwner }) {
   return (
     <div className={"item-card" + (item.sold ? " sold" : "")}>
       <button
@@ -20,17 +20,31 @@ export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessa
       <p className="item-category">{item.category}</p>
       <p className="item-title">{item.title}</p>
       <p className="item-price">₹{Number(item.price).toLocaleString("en-IN")}</p>
-      <span className={"condition-badge cond-" + item.condition.replace(" ", "-").toLowerCase()}>
-        {item.condition}
-      </span>
+
+      <div className="item-meta-row">
+        <span className={"condition-badge cond-" + item.condition.replace(" ", "-").toLowerCase()}>
+          {item.condition}
+        </span>
+        {item.rating && (
+          <span className="rating-badge">★ {item.rating.toFixed(1)} ({item.reviewCount})</span>
+        )}
+      </div>
+
       <p className="item-seller">Seller: {item.sellerName}</p>
 
       {item.sold ? (
         <span className="sold-badge">SOLD</span>
       ) : (
         <div className="item-actions">
-          <button className="primary-btn small" onClick={() => onMessageSeller(item)}>
-            Message seller
+          <button
+            className={"primary-btn small" + (inCart ? " in-cart" : "")}
+            onClick={() => onAddToCart(item)}
+            disabled={inCart}
+          >
+            {inCart ? "In cart ✓" : "Add to cart"}
+          </button>
+          <button className="ghost-btn small" onClick={() => onMessageSeller(item)}>
+            Message
           </button>
           {isOwner && (
             <button className="ghost-btn small" onClick={() => onMarkSold(item.id)}>

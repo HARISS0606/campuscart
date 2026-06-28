@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({ user, wishCount, onLogin, onLogout, onOpenPost, onOpenWishlist }) {
+export default function Navbar({ user, wishCount, cartCount, onLogin, onLogout, onOpenPost, onOpenWishlist, onOpenCart }) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -10,6 +10,9 @@ export default function Navbar({ user, wishCount, onLogin, onLogout, onOpenPost,
       <div className="navbar-actions">
         <button className="ghost-btn" onClick={onOpenWishlist}>
           ♥ Wishlist ({wishCount})
+        </button>
+        <button className="ghost-btn" onClick={onOpenCart}>
+          🛒 Cart ({cartCount})
         </button>
         {user ? (
           <>

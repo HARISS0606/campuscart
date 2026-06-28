@@ -5,6 +5,9 @@ import ItemCard from "./components/ItemCard";
 import PostItemModal from "./components/PostItemModal";
 import ChatModal from "./components/ChatModal";
 import SignInModal from "./components/SignInModal";
+import CartModal from "./components/CartModal";
+import PaymentModal from "./components/PaymentModal";
+import FeedbackModal from "./components/FeedbackModal";
 import { mockListings } from "./data/mockData";
 import * as firebaseApi from "./firebase.js";
 
@@ -20,6 +23,10 @@ export default function App() {
   const [showPostModal, setShowPostModal] = useState(false);
   const [chatItem, setChatItem] = useState(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [feedbackItems, setFeedbackItems] = useState(null);
 
   const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
@@ -58,7 +65,7 @@ export default function App() {
     setUser(null);
   }
 
-  async function handlePostSubmit({ title, category, price, condition, imageFile }) {
+  async function handlePostSubmit({ title, category, price, condition, imageFile, imagePreview }) {
     if (demoMode) {
       const newItem = {
         id: Date.now().toString(),
@@ -68,6 +75,9 @@ export default function App() {
         condition,
         sellerName: user ? user.displayName : "You",
         sold: false,
+        imageUrl: imagePreview || null,
+        rating: null,
+        reviewCount: 0,
       };
       setItems((prev) => [newItem, ...prev]);
       setShowPostModal(false);
@@ -113,6 +123,41 @@ export default function App() {
     setChatItem(item);
   }
 
+  function handleAddToCart(item) {
+    setCart((prev) => (prev.find((i) => i.id === item.id) ? prev : [...prev, item]));
+  }
+
+  function handleRemoveFromCart(itemId) {
+    setCart((prev) => prev.filter((i) => i.id !== itemId));
+  }
+
+  function handleCheckout() {
+    setShowCart(false);
+    setShowPayment(true);
+  }
+
+  function handlePaymentSuccess(purchasedItems) {
+    setItems((prev) =>
+      prev.map((i) => (purchasedItems.find((p) => p.id === i.id) ? { ...i, sold: true } : i))
+    );
+    setShowPayment(false);
+    setFeedbackItems(purchasedItems);
+    setCart([]);
+  }
+
+  function handleFeedbackSubmit(itemId, rating, comment) {
+    setItems((prev) =>
+      prev.map((i) => {
+        if (i.id !== itemId) return i;
+        const prevCount = i.reviewCount || 0;
+        const prevRating = i.rating || 0;
+        const newCount = prevCount + 1;
+        const newRating = (prevRating * prevCount + rating) / newCount;
+        return { ...i, rating: newRating, reviewCount: newCount };
+      })
+    );
+  }
+
   const filtered = items.filter(
     (i) =>
       (activeCat === "All" || i.category === activeCat) &&
@@ -124,10 +169,12 @@ export default function App() {
       <Navbar
         user={user}
         wishCount={wishlist.length}
+        cartCount={cart.length}
         onLogin={handleLogin}
         onLogout={handleLogout}
         onOpenPost={() => setShowPostModal(true)}
         onOpenWishlist={() => setActiveCat("All")}
+        onOpenCart={() => setShowCart(true)}
       />
 
       {demoMode && (
@@ -184,6 +231,8 @@ export default function App() {
               onToggleWishlist={handleToggleWishlist}
               onMessageSeller={handleMessageSeller}
               onMarkSold={handleMarkSold}
+              onAddToCart={handleAddToCart}
+              inCart={!!cart.find((c) => c.id === item.id)}
               isOwner={user && item.sellerName === (user.displayName || user.email)}
             />
           ))}
@@ -198,6 +247,31 @@ export default function App() {
 
       {showSignInModal && (
         <SignInModal onClose={() => setShowSignInModal(false)} onSignIn={handleSignInSubmit} />
+      )}
+
+      {showCart && (
+        <CartModal
+          cartItems={cart}
+          onRemove={handleRemoveFromCart}
+          onClose={() => setShowCart(false)}
+          onCheckout={handleCheckout}
+        />
+      )}
+
+      {showPayment && (
+        <PaymentModal
+          cartItems={cart}
+          onClose={() => setShowPayment(false)}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
+
+      {feedbackItems && (
+        <FeedbackModal
+          items={feedbackItems}
+          onClose={() => setFeedbackItems(null)}
+          onSubmit={handleFeedbackSubmit}
+        />
       )}
     </div>
   );

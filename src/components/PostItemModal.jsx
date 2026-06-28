@@ -7,11 +7,18 @@ export default function PostItemModal({ onClose, onSubmit }) {
   const [price, setPrice] = useState("");
   const [condition, setCondition] = useState("Good");
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    setImageFile(file);
+    if (file) setImagePreview(URL.createObjectURL(file));
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!title.trim() || !price) return;
-    onSubmit({ title: title.trim(), category, price, condition, imageFile });
+    onSubmit({ title: title.trim(), category, price, condition, imageFile, imagePreview });
   }
 
   return (
@@ -54,7 +61,10 @@ export default function PostItemModal({ onClose, onSubmit }) {
         </select>
 
         <label>Photo (optional)</label>
-        <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        {imagePreview && (
+          <img src={imagePreview} alt="Preview" style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 9, marginTop: 6 }} />
+        )}
 
         <button type="submit" className="primary-btn" style={{ marginTop: 12 }}>
           List item
