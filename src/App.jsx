@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import FilterBar from "./components/FilterBar";
 import ItemCard from "./components/ItemCard";
 import PostItemModal from "./components/PostItemModal";
+import ChatModal from "./components/ChatModal";
+import SignInModal from "./components/SignInModal";
 import { mockListings } from "./data/mockData";
 import * as firebaseApi from "./firebase.js";
 
@@ -16,6 +18,8 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState("All");
   const [showPostModal, setShowPostModal] = useState(false);
+  const [chatItem, setChatItem] = useState(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
@@ -33,7 +37,7 @@ export default function App() {
 
   async function handleLogin() {
     if (demoMode) {
-      setUser({ displayName: "Demo Student", email: "demo@college.edu", uid: "demo" });
+      setShowSignInModal(true);
       return;
     }
     try {
@@ -42,6 +46,11 @@ export default function App() {
     } catch (e) {
       alert("Login failed: " + e.message);
     }
+  }
+
+  function handleSignInSubmit(userObj) {
+    setUser(userObj);
+    setShowSignInModal(false);
   }
 
   async function handleLogout() {
@@ -101,8 +110,7 @@ export default function App() {
   }
 
   function handleMessageSeller(item) {
-    // Placeholder: in a full build this opens an in-app chat thread.
-    alert(`Opening chat with ${item.sellerName} about "${item.title}"...`);
+    setChatItem(item);
   }
 
   const filtered = items.filter(
@@ -184,6 +192,12 @@ export default function App() {
 
       {showPostModal && (
         <PostItemModal onClose={() => setShowPostModal(false)} onSubmit={handlePostSubmit} />
+      )}
+
+      {chatItem && <ChatModal item={chatItem} onClose={() => setChatItem(null)} />}
+
+      {showSignInModal && (
+        <SignInModal onClose={() => setShowSignInModal(false)} onSignIn={handleSignInSubmit} />
       )}
     </div>
   );
