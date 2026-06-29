@@ -1,4 +1,5 @@
 import React from "react";
+import { getCategoryArt } from "../data/categoryArt";
 
 export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessageSeller, onMarkSold, onAddToCart, inCart, isOwner }) {
   return (
@@ -14,10 +15,13 @@ export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessa
       {item.imageUrl ? (
         <img src={item.imageUrl} alt={item.title} className="item-img" />
       ) : (
-        <div className="item-img placeholder">No photo</div>
+        <img src={getCategoryArt(item.category)} alt={item.category} className="item-img" />
       )}
 
       <p className="item-category">{item.category}</p>
+      {item.category === "Projects" && (
+        <p className="ref-note">For reference only — not for direct resubmission.</p>
+      )}
       <p className="item-title">{item.title}</p>
       <p className="item-price">₹{Number(item.price).toLocaleString("en-IN")}</p>
 

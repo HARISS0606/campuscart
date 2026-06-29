@@ -217,6 +217,10 @@ export default function App() {
         setQuery={setQuery}
         activeCat={activeCat}
         setActiveCat={setActiveCat}
+        onScanSearch={() => {
+          setActiveCat("All");
+          setQuery("");
+        }}
       />
 
       {filtered.length === 0 ? (
