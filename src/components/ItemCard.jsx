@@ -1,7 +1,7 @@
 import React from "react";
 import { getCategoryArt } from "../data/categoryArt";
 
-export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessageSeller, onMarkSold, onAddToCart, inCart, isOwner }) {
+export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessageSeller, onMarkSold, onAddToCart, onCall, onViewReviews, inCart, isOwner }) {
   return (
     <div className={"item-card" + (item.sold ? " sold" : "")}>
       <button
@@ -30,7 +30,9 @@ export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessa
           {item.condition}
         </span>
         {item.rating && (
-          <span className="rating-badge">★ {item.rating.toFixed(1)} ({item.reviewCount})</span>
+          <button className="rating-badge rating-btn" onClick={() => onViewReviews(item)}>
+            ★ {item.rating.toFixed(1)} ({item.reviewCount})
+          </button>
         )}
       </div>
 
@@ -49,6 +51,9 @@ export default function ItemCard({ item, isWishlisted, onToggleWishlist, onMessa
           </button>
           <button className="ghost-btn small" onClick={() => onMessageSeller(item)}>
             Message
+          </button>
+          <button className="ghost-btn small call-btn" onClick={() => onCall(item)}>
+            📞 Call
           </button>
           {isOwner && (
             <button className="ghost-btn small" onClick={() => onMarkSold(item.id)}>

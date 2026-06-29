@@ -8,6 +8,8 @@ import SignInModal from "./components/SignInModal";
 import CartModal from "./components/CartModal";
 import PaymentModal from "./components/PaymentModal";
 import FeedbackModal from "./components/FeedbackModal";
+import ReviewsModal from "./components/ReviewsModal";
+import OrdersModal from "./components/OrdersModal";
 import { mockListings } from "./data/mockData";
 import * as firebaseApi from "./firebase.js";
 
@@ -27,6 +29,10 @@ export default function App() {
   const [showCart, setShowCart] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [feedbackItems, setFeedbackItems] = useState(null);
+  const [reviewItem, setReviewItem] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [showOrders, setShowOrders] = useState(false);
+  const [pendingCheckout, setPendingCheckout] = useState(null);
 
   const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
@@ -131,7 +137,8 @@ export default function App() {
     setCart((prev) => prev.filter((i) => i.id !== itemId));
   }
 
-  function handleCheckout() {
+  function handleCheckout(checkoutDetails) {
+    setPendingCheckout(checkoutDetails);
     setShowCart(false);
     setShowPayment(true);
   }
@@ -140,9 +147,38 @@ export default function App() {
     setItems((prev) =>
       prev.map((i) => (purchasedItems.find((p) => p.id === i.id) ? { ...i, sold: true } : i))
     );
+    const order = {
+      id: "order-" + Date.now(),
+      items: purchasedItems,
+      delivery: pendingCheckout?.delivery || "pickup",
+      address: pendingCheckout?.address || null,
+      total: pendingCheckout?.total || purchasedItems.reduce((s, i) => s + Number(i.price), 0),
+      status: "Placed",
+    };
+    setOrders((prev) => [order, ...prev]);
+    // Simulate delivery progressing through stages for hostel-delivery orders.
+    if (order.delivery === "delivery") {
+      const stages = ["Placed", "Packed", "Out for delivery", "Delivered"];
+      stages.forEach((stage, i) => {
+        setTimeout(() => {
+          setOrders((prev) =>
+            prev.map((o) => (o.id === order.id ? { ...o, status: stage } : o))
+          );
+        }, (i + 1) * 4000);
+      });
+    }
     setShowPayment(false);
     setFeedbackItems(purchasedItems);
     setCart([]);
+    setPendingCheckout(null);
+  }
+
+  function handleCall(item) {
+    window.location.href = `tel:${item.sellerPhone || ""}`;
+  }
+
+  function handleViewReviews(item) {
+    setReviewItem(item);
   }
 
   function handleFeedbackSubmit(itemId, rating, comment) {
@@ -153,7 +189,13 @@ export default function App() {
         const prevRating = i.rating || 0;
         const newCount = prevCount + 1;
         const newRating = (prevRating * prevCount + rating) / newCount;
-        return { ...i, rating: newRating, reviewCount: newCount };
+        const newReview = { reviewer: user ? user.displayName : "You", rating, comment };
+        return {
+          ...i,
+          rating: newRating,
+          reviewCount: newCount,
+          reviews: [newReview, ...(i.reviews || [])],
+        };
       })
     );
   }
@@ -170,11 +212,13 @@ export default function App() {
         user={user}
         wishCount={wishlist.length}
         cartCount={cart.length}
+        ordersCount={orders.length}
         onLogin={handleLogin}
         onLogout={handleLogout}
         onOpenPost={() => setShowPostModal(true)}
         onOpenWishlist={() => setActiveCat("All")}
         onOpenCart={() => setShowCart(true)}
+        onOpenOrders={() => setShowOrders(true)}
       />
 
       {demoMode && (
@@ -236,6 +280,8 @@ export default function App() {
               onMessageSeller={handleMessageSeller}
               onMarkSold={handleMarkSold}
               onAddToCart={handleAddToCart}
+              onCall={handleCall}
+              onViewReviews={handleViewReviews}
               inCart={!!cart.find((c) => c.id === item.id)}
               isOwner={user && item.sellerName === (user.displayName || user.email)}
             />
@@ -277,6 +323,10 @@ export default function App() {
           onSubmit={handleFeedbackSubmit}
         />
       )}
+
+      {reviewItem && <ReviewsModal item={reviewItem} onClose={() => setReviewItem(null)} />}
+
+      {showOrders && <OrdersModal orders={orders} onClose={() => setShowOrders(false)} />}
     </div>
   );
 }

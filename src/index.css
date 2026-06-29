@@ -604,6 +604,119 @@ h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
   margin: 8px 0 0;
 }
 
+.rating-btn { border: none; cursor: pointer; }
+.call-btn { color: var(--teal-deep); }
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 6px;
+}
+.review-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.review-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.review-name { font-size: 13px; font-weight: 600; }
+.review-stars { font-size: 13px; color: var(--amber); }
+.review-comment { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.45; }
+
+.address-fields {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+}
+.address-fields input {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  font-size: 14px;
+  margin-top: 4px;
+}
+.address-fields input:focus { outline: none; border-color: var(--teal); }
+
+.cart-subtotal-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.cart-grand-total {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.order-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.order-items-line {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.order-status-pill {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--amber-light);
+  color: var(--amber);
+}
+.order-track {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.track-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+.track-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border);
+  margin-bottom: 4px;
+}
+.track-step.done .track-dot { background: var(--teal); }
+.track-label {
+  font-size: 10px;
+  color: var(--muted);
+}
+.track-step.done .track-label { color: var(--teal-deep); font-weight: 500; }
+
+
 
 
 
