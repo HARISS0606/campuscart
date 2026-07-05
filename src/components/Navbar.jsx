@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "../assets/logo";
+import Logo from "./Logo";
 
 export default function Navbar({ user, wishCount, cartCount, ordersCount, onLogin, onLogout, onOpenPost, onOpenWishlist, onOpenCart, onOpenOrders }) {
   return (
