@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Logo from "./Logo";
 
-export default function Navbar({ user, wishCount, cartCount, ordersCount, onLogin, onLogout, onOpenPost, onOpenWishlist, onOpenCart, onOpenOrders }) {
+export default function Navbar({ user, wishCount, cartCount, ordersCount, onLogin, onLogout, onOpenPost, onOpenWishlist, onOpenCart, onOpenOrders, onOpenProfile, onOpenRewards, onOpenGiftCards, onOpenNotifications, onOpenSupport }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -9,24 +20,38 @@ export default function Navbar({ user, wishCount, cartCount, ordersCount, onLogi
         <span>CampusCart</span>
       </div>
       <div className="navbar-actions">
-        <button className="ghost-btn" onClick={onOpenWishlist}>
-          ♥ Wishlist ({wishCount})
-        </button>
-        <button className="ghost-btn" onClick={onOpenCart}>
-          🛒 Cart ({cartCount})
-        </button>
-        <button className="ghost-btn" onClick={onOpenOrders}>
-          📦 Orders ({ordersCount})
-        </button>
+        <button className="ghost-btn" onClick={onOpenWishlist}>♥ Wishlist ({wishCount})</button>
+        <button className="ghost-btn" onClick={onOpenCart}>🛒 Cart ({cartCount})</button>
+        <button className="ghost-btn" onClick={onOpenOrders}>📦 Orders ({ordersCount})</button>
         {user ? (
-          <>
-            <span className="user-chip">{user.displayName || user.email}</span>
-            <button className="primary-btn" onClick={onOpenPost}>+ Sell an item</button>
-            <button className="ghost-btn" onClick={onLogout}>Log out</button>
-          </>
+          <div className="user-menu-wrap" ref={menuRef}>
+            <button className="user-chip" onClick={() => setMenuOpen((v) => !v)}>
+              {user.displayName || user.email} ▾
+            </button>
+            {menuOpen && (
+              <div className="user-dropdown">
+                <div className="dropdown-header">
+                  <span className="dropdown-name">{user.displayName}</span>
+                  <span className="dropdown-email">{user.email}</span>
+                </div>
+                <div className="dropdown-divider" />
+                <button className="dropdown-item" onClick={() => { onOpenProfile(); setMenuOpen(false); }}>👤 My profile</button>
+                <button className="dropdown-item" onClick={() => { onOpenOrders(); setMenuOpen(false); }}>📦 My orders</button>
+                <button className="dropdown-item" onClick={() => { onOpenWishlist(); setMenuOpen(false); }}>♥ Wishlist</button>
+                <button className="dropdown-item" onClick={() => { onOpenRewards(); setMenuOpen(false); }}>🎁 Rewards</button>
+                <button className="dropdown-item" onClick={() => { onOpenGiftCards(); setMenuOpen(false); }}>💳 Gift cards</button>
+                <button className="dropdown-item" onClick={() => { onOpenNotifications(); setMenuOpen(false); }}>🔔 Notification preferences</button>
+                <button className="dropdown-item seller-item" onClick={() => { onOpenPost(); setMenuOpen(false); }}>🏪 Become a seller</button>
+                <div className="dropdown-divider" />
+                <button className="dropdown-item" onClick={() => { onOpenSupport(); setMenuOpen(false); }}>🎧 24x7 customer care</button>
+                <button className="dropdown-item logout-item" onClick={() => { onLogout(); setMenuOpen(false); }}>← Log out</button>
+              </div>
+            )}
+          </div>
         ) : (
-          <button className="primary-btn" onClick={onLogin}>Sign in with college email</button>
+          <button className="primary-btn" onClick={onLogin}>Sign in</button>
         )}
+        {user && <button className="primary-btn" onClick={onOpenPost}>+ Sell an item</button>}
       </div>
     </nav>
   );

@@ -10,6 +10,15 @@ import PaymentModal from "./components/PaymentModal";
 import FeedbackModal from "./components/FeedbackModal";
 import ReviewsModal from "./components/ReviewsModal";
 import OrdersModal from "./components/OrdersModal";
+import ProfileModal from "./components/ProfileModal";
+import RewardsModal from "./components/RewardsModal";
+import GiftCardModal from "./components/GiftCardModal";
+import NotificationsModal from "./components/NotificationsModal";
+import SupportModal from "./components/SupportModal";
+import Footer from "./components/Footer";
+import ScanSearchModal from "./components/ScanSearchModal";
+import BannerSlider from "./components/BannerSlider";
+import CategoryRow from "./components/CategoryRow";
 import { mockListings } from "./data/mockData";
 import * as firebaseApi from "./firebase.js";
 
@@ -33,6 +42,12 @@ export default function App() {
   const [orders, setOrders] = useState([]);
   const [showOrders, setShowOrders] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(null);
+  const [showScan, setShowScan] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showRewards, setShowRewards] = useState(false);
+  const [showGiftCards, setShowGiftCards] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
 
   const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
@@ -219,7 +234,19 @@ export default function App() {
         onOpenWishlist={() => setActiveCat("All")}
         onOpenCart={() => setShowCart(true)}
         onOpenOrders={() => setShowOrders(true)}
+        onOpenScan={() => setShowScan(true)}
+        onSearch={(cat) => { setActiveCat(cat); setQuery(""); }}
+        searchQuery={query}
+        setSearchQuery={setQuery}
+        onOpenProfile={() => setShowProfile(true)}
+        onOpenRewards={() => setShowRewards(true)}
+        onOpenGiftCards={() => setShowGiftCards(true)}
+        onOpenNotifications={() => setShowNotifications(true)}
+        onOpenSupport={() => setShowSupport(true)}
       />
+
+      <BannerSlider setActiveCat={setActiveCat} />
+      <CategoryRow setActiveCat={setActiveCat} setQuery={setQuery} />
 
       {demoMode && (
         <div className="demo-banner">
@@ -327,6 +354,33 @@ export default function App() {
       {reviewItem && <ReviewsModal item={reviewItem} onClose={() => setReviewItem(null)} />}
 
       {showOrders && <OrdersModal orders={orders} onClose={() => setShowOrders(false)} />}
+
+      {showScan && (
+        <ScanSearchModal
+          onClose={() => setShowScan(false)}
+          onResult={(cat) => { setActiveCat(cat); setQuery(""); setShowScan(false); }}
+        />
+      )}
+
+      {showProfile && (
+        <ProfileModal
+          user={user}
+          onClose={() => setShowProfile(false)}
+          onUpdate={(updated) => setUser(updated)}
+        />
+      )}
+
+      {showRewards && (
+        <RewardsModal orders={orders} onClose={() => setShowRewards(false)} />
+      )}
+
+      {showGiftCards && <GiftCardModal onClose={() => setShowGiftCards(false)} />}
+
+      {showNotifications && <NotificationsModal onClose={() => setShowNotifications(false)} />}
+
+      {showSupport && <SupportModal onClose={() => setShowSupport(false)} />}
+
+      <Footer />
     </div>
   );
 }
