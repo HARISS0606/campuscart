@@ -16,6 +16,8 @@ import GiftCardModal from "./components/GiftCardModal";
 import NotificationsModal from "./components/NotificationsModal";
 import SupportModal from "./components/SupportModal";
 import Footer from "./components/Footer";
+import AuthModal from "./components/AuthModal";
+import InboxModal from "./components/InboxModal";
 import ScanSearchModal from "./components/ScanSearchModal";
 import BannerSlider from "./components/BannerSlider";
 import CategoryRow from "./components/CategoryRow";
@@ -27,6 +29,7 @@ import * as firebaseApi from "./firebase.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [showInbox, setShowInbox] = useState(false);
   const [items, setItems] = useState(mockListings);
   const [wishlist, setWishlist] = useState([]);
   const [query, setQuery] = useState("");
@@ -228,6 +231,7 @@ export default function App() {
         wishCount={wishlist.length}
         cartCount={cart.length}
         ordersCount={orders.length}
+        onOpenInbox={() => setShowInbox(true)}
         onLogin={handleLogin}
         onLogout={handleLogout}
         onOpenPost={() => setShowPostModal(true)}
@@ -323,8 +327,11 @@ export default function App() {
       {chatItem && <ChatModal item={chatItem} onClose={() => setChatItem(null)} />}
 
       {showSignInModal && (
-        <SignInModal onClose={() => setShowSignInModal(false)} onSignIn={handleSignInSubmit} />
-      )}
+  <AuthModal
+    onClose={() => setShowSignInModal(false)}
+    onSuccess={(userData) => { setUser(userData); setShowSignInModal(false); }}
+  />
+)}
 
       {showCart && (
         <CartModal
@@ -381,6 +388,16 @@ export default function App() {
       {showSupport && <SupportModal onClose={() => setShowSupport(false)} />}
 
       <Footer />
+      {showInbox && (
+  <InboxModal
+    currentUser={user}
+    onClose={() => setShowInbox(false)}
+    onOpenThread={(thread) => {
+      setShowInbox(false);
+      setChatItem({ id: thread.itemId, title: thread.itemTitle, price: thread.itemPrice, sellerName: thread.sellerName, sellerUid: thread.sellerUid });
+    }}
+  />
+)}
     </div>
   );
 }
