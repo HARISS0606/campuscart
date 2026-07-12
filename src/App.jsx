@@ -4,7 +4,6 @@ import FilterBar from "./components/FilterBar";
 import ItemCard from "./components/ItemCard";
 import PostItemModal from "./components/PostItemModal";
 import ChatModal from "./components/ChatModal";
-import SignInModal from "./components/SignInModal";
 import CartModal from "./components/CartModal";
 import PaymentModal from "./components/PaymentModal";
 import FeedbackModal from "./components/FeedbackModal";
