@@ -66,17 +66,9 @@ export default function App() {
     firebaseApi.getWishlist(user.uid).then(setWishlist).catch(console.error);
   }, [user]);
 
-  async function handleLogin() {
-    if (demoMode) {
-      setShowSignInModal(true);
-      return;
-    }
-    try {
-      const res = await firebaseApi.loginWithGoogle();
-      setUser(res.user);
-    } catch (e) {
-      alert("Login failed: " + e.message);
-    }
+  function handleLogin() {
+  setShowSignInModal(true);
+}
   }
 
   function handleSignInSubmit(userObj) {
