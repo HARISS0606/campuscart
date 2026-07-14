@@ -55,7 +55,7 @@ export default function App() {
 
   useEffect(() => {
     if (demoMode) return;
-    const unsub = firebaseApi.watchAuth(() => {});
+    const unsub = firebaseApi.watchAuth(setUser);
     const unsub = firebaseApi.watchAuth((firebaseUser) => {
   if (firebaseUser) setUser((prev) => prev || { ...firebaseUser, role: "buyer" });
 });
