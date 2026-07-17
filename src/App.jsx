@@ -1,3 +1,5 @@
+import StationeryShop from "./components/StationeryShop";
+import "./stationery.css";
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import FilterBar from "./components/FilterBar";
@@ -50,6 +52,7 @@ export default function App() {
   const [showGiftCards, setShowGiftCards] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
+  const [showStationery, setShowStationery] = useState(false);
 
   const demoMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
@@ -244,6 +247,16 @@ export default function App() {
       />
 
       <BannerSlider setActiveCat={setActiveCat} />
+      <div className="stationery-bar">
+        <button className="stationery-shortcut" onClick={() => setShowStationery(true)}>
+          <span>🖨</span>
+          <div>
+            <strong>Stationery Shop</strong>
+            <span>Buy items · Print · Xerox · Get PIN</span>
+          </div>
+          <span className="stationery-arrow">→</span>
+        </button>
+      </div>
       <CategoryRow setActiveCat={setActiveCat} setQuery={setQuery} />
 
       {demoMode && (
@@ -380,6 +393,8 @@ export default function App() {
       {showNotifications && <NotificationsModal onClose={() => setShowNotifications(false)} />}
 
       {showSupport && <SupportModal onClose={() => setShowSupport(false)} />}
+
+      {showStationery && <StationeryShop onClose={() => setShowStationery(false)} />}
 
       <Footer />
       {showInbox && (
